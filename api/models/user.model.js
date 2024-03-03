@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+
 const userSchema = new mongoose.Schema (
 {
     username:{
@@ -19,7 +20,7 @@ const userSchema = new mongoose.Schema (
     }
 }, 
 
-{timerstamp:true} //for the creation time and the updation time of the user
+{timestamps:true} //for the creation time and the updation time of the user
 
 );
 
