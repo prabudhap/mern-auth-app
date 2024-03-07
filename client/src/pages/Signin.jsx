@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Link,useNavigate } from 'react-router-dom';
-
+import { signInStart,signInFailure, signInSuccess } from '../redux/user/userSlice';
+import {useDispatch,useSelector} from 'react-redux';
 export default function signin() {
 
   //for the username,email,password
   const [formData, setFormData] = useState({});
-  const [error,setError] = useState(false);
-  const [loading,setLoading] = useState(false);
+  const {error,loading} =  useSelector((state) => state.user);
+  console.log(loading,error)
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const handleChange =(e) => {
        setFormData({ ...formData, [e.target.id]:e.target.value});
   }
@@ -18,8 +20,7 @@ export default function signin() {
     e.preventDefault(); //to not let the page refresh while submitting
     
     try {
-      setLoading(true);
-      setError(false);
+        dispatch(signInStart());
       const res = await fetch ('/api/auth/signin', 
       {
         method:'POST',
@@ -33,20 +34,20 @@ export default function signin() {
      
       const data = await res.json();
 
-      setLoading(false);
+      
       if (data.success === false) {
-        setError(true);
+        dispatch(signInFailure(data.message));
         return;
       
       }
+      dispatch(signInSuccess(data));
       navigate('/');
 
     } catch (error) {
-      setLoading(false);
-      setError(true);    
+      dispatch(signInFailure(error)); 
     }
    
-  }
+  };
 
   return (
     <div className='p-3 max-w-lg mx-auto'>
@@ -69,7 +70,9 @@ export default function signin() {
           <span className='ring-offset-fuchsia-700 text-green-700 font-semibold'>Sign up</span>
           </Link>         
       </div>
-      <div className='text-red-700 mt-5' >{error && "Something went wrong! Try again later. "}</div>
+      <p className='text-red-700 mt-5' >
+        {error ? error.message || 'Something went wrong!' : ''}
+      </p>
     </div>
 
   )
