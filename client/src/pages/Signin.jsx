@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Link,useNavigate } from 'react-router-dom';
-import { signInStart,signInFailure, signInSuccess } from '../redux/user/userSlice';
+import { signInStart,signInFailure, signInSuccess } from '../redux/user/userSlice.js';
 import {useDispatch,useSelector} from 'react-redux';
+import OAuth from '../components/OAuth';
+
 export default function signin() {
 
   //for the username,email,password
@@ -61,7 +63,7 @@ export default function signin() {
         <input type="text" placeholder='Email' id='email' className='bg-slate-300 p-3 rounded-lg'onChange={handleChange}/>
         <input type="password" placeholder='Password' id='password' className='bg-slate-300 p-3 rounded-lg' onChange={handleChange}/>  
         <button disabled={loading} className='bg-blue-500 rounded-lg text-white uppercase hover:opacity-80 disabled:opacity-40'>{loading ? 'loading ...' : 'Sign IN'}</button>  
-          
+          <OAuth/>
       </form>
 
       <div className='flex p-3 gap-4 justify-center' >
