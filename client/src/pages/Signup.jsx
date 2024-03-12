@@ -11,7 +11,7 @@ export default function signup() {
   const navigate = useNavigate();
   const handleChange =(e) => {
        setFormData({ ...formData, [e.target.id]:e.target.value});
-  }
+  };
 
   //for teh signing up thing on submittion
   const handleSubmit = async (e) => 
@@ -33,7 +33,7 @@ export default function signup() {
       
      
       const data = await res.json();
-      console.log(data);
+     
       setLoading(false);
       if (data.success === false) {
         setError(true);
@@ -59,7 +59,7 @@ export default function signup() {
       <form onSubmit={handleSubmit} className='flex flex-col gap-4   '>
 
         <input type="text" placeholder='Username' id='username' className='bg-slate-300 p-3 rounded-lg' onChange={handleChange}/>
-        <input type="text" placeholder='Email' id='email' className='bg-slate-300 p-3 rounded-lg'onChange={handleChange}/>
+        <input type="email" placeholder='Email' id='email' className='bg-slate-300 p-3 rounded-lg'onChange={handleChange}/>
         <input type="password" placeholder='Password' id='password' className='bg-slate-300 p-3 rounded-lg' onChange={handleChange}/>  
         <button disabled={loading} className='bg-blue-500 rounded-lg text-white uppercase hover:opacity-80 disabled:opacity-40'>{loading ? 'loading ...' : 'Sign Up'}</button>  
         <OAuth/>
@@ -71,7 +71,7 @@ export default function signup() {
           <span className='ring-offset-fuchsia-700 text-green-700 font-semibold'>Sign In</span>
           </Link>         
       </div>
-      <div className='text-red-700 mt-5' >{error && "Something went wrong! Try again later. "}</div>
+      <p className='text-red-700 mt-5' >{error && "Something went wrong! Try again later. "}</p>
     </div>
 
   )

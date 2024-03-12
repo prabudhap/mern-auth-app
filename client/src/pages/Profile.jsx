@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useRef } from 'react'
 import { getDownloadURL, getStorage, ref, uploadBytesResumable} from 'firebase/storage';
 import { app } from '../firebase';
+import { updateUserFailure,updateUserStart,updateUserSuccess } from '../redux/user/userSlice.js';
 
 
 export default function profile() {
+  const dispatch = useDispatch();
   const  fileRef = useRef(null);
   const [image, setImage] = useState(undefined); // to save the image
   //console.log(image);
@@ -19,7 +21,7 @@ export default function profile() {
       handleFileUpload(image);
     }
   }, [image]);
-  const handleFileUpload = async (image) => {
+    const handleFileUpload = async (image) => {
     const storage = getStorage(app);
     const fileName = new Date().getTime() + image.name;
     const storageRef = ref(storage, fileName);
@@ -41,14 +43,40 @@ export default function profile() {
       }
     );
   };
+  const handleChange = (e) =>
+  {
+    setFormData({...formData, [e.target.id]: e.target.value}); //keep the previous info intact and change based upon the id of the input 
+  };
 
+  const handleSubmit = async (e) =>
+    {
+      e.preventDefault(); //remove the default behaviour of browser to refresh the form submit the form
+      try {
+        dispatch (updateUserStart());
+        const res = await fetch(`/api/user/update/${currentUser._id}`, {
+          method : 'POST',
+          headers:  {
+            'Content-Type':'application/json',
+          },
+          body :JSON.stringify(formData),
+        });
+        const data = await res.json();
+        if (data.success === false) {
+          dispatch(updateUserFailure(data));
+          return;
+        }
+        dispatch(updateUserSuccess(data));
+      } catch (error) { 
+        dispatch(updateUserFailure(error));
+      }
+    };
 
   return (
     <div className='p-3  max-w-lg mx-auto'>
       <h1 className='text-3xl font-semibold rounded-sm text-center my-7 text-blue-700 p-6 '>
         Profile
       </h1>
-      <form className='flex flex-col gap-4 ' >
+      <form onSubmit={handleSubmit} className='flex flex-col gap-4 ' >
 
         <input type="file" ref={fileRef} hidden accept='image/*' onChange={(e) => setImage(e.target.files[0])} />
         
@@ -58,9 +86,25 @@ export default function profile() {
          (<span className='text-red '>{`Uploading :   ${imagePercent} %`}</span>) : imagePercent === 100 ? (<span className='text-green-600'>uploaded successfully</span>): "" }</p>
       
       
-      <input defaultValue={currentUser.username} type="text" id ='username' placeholder='Username' className='bg-slate-200 rounded-lg p-3 mt-2'  />
-      <input  defaultValue={currentUser.email} type="email" id ='email' placeholder='Email' className='bg-slate-200 rounded-lg p-3 mt-2'  />
-      <input  type="password" id ='password' placeholder='Password' className='bg-slate-200 rounded-lg p-3 mt-2'  />
+      <input 
+      defaultValue={currentUser.username} 
+      type="text" 
+      id ='username' 
+      placeholder='Username' 
+      className='bg-slate-200 rounded-lg p-3 mt-2' on onChange={handleChange} />
+
+      <input  
+      defaultValue={currentUser.email} 
+      type="email" 
+      id ='email' 
+      placeholder='Email' 
+      className='bg-slate-200 rounded-lg p-3 mt-2'on onChange={handleChange}  />
+
+      <input  
+      type="password" 
+      id ='password' 
+      placeholder='Password' 
+      className='bg-slate-200 rounded-lg p-3 mt-2'on onChange={handleChange} />
       
       <button className='bg-slate-800 text-white p-3 uppercase hover:opacity-40 disabled:opacity-30'>update </button>
       </form>

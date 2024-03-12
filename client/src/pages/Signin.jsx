@@ -9,12 +9,12 @@ export default function signin() {
   //for the username,email,password
   const [formData, setFormData] = useState({});
   const {error,loading} =  useSelector((state) => state.user);
-  console.log(loading,error)
+  
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleChange =(e) => {
        setFormData({ ...formData, [e.target.id]:e.target.value});
-  }
+  };
 
   //for the signing up thing on submittion
   const handleSubmit = async (e) => 
@@ -38,7 +38,7 @@ export default function signin() {
 
       
       if (data.success === false) {
-        dispatch(signInFailure(data.message));
+        dispatch(signInFailure(data));
         return;
       
       }
@@ -60,7 +60,7 @@ export default function signin() {
 
       <form onSubmit={handleSubmit} className='flex flex-col gap-4   '>
 
-        <input type="text" placeholder='Email' id='email' className='bg-slate-300 p-3 rounded-lg'onChange={handleChange}/>
+        <input type="email" placeholder='Email' id='email' className='bg-slate-300 p-3 rounded-lg'onChange={handleChange}/>
         <input type="password" placeholder='Password' id='password' className='bg-slate-300 p-3 rounded-lg' onChange={handleChange}/>  
         <button disabled={loading} className='bg-blue-500 rounded-lg text-white uppercase hover:opacity-80 disabled:opacity-40'>{loading ? 'loading ...' : 'Sign IN'}</button>  
           <OAuth/>
@@ -72,10 +72,11 @@ export default function signin() {
           <span className='ring-offset-fuchsia-700 text-green-700 font-semibold'>Sign up</span>
           </Link>         
       </div>
+
       <p className='text-red-700 mt-5' >
         {error ? error.message || 'Something went wrong!' : ''}
       </p>
     </div>
 
-  )
+  );
 }

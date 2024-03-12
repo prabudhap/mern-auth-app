@@ -3,10 +3,12 @@ import {GoogleAuthProvider, signInWithPopup, getAuth} from 'firebase/auth';
 import { app } from '../firebase';
 import { useDispatch } from 'react-redux';
 import { signInSuccess } from '../redux/user/userSlice.js';
+import {useNavigate} from 'react-router-dom'
 
 export default function OAuth() {
 
     const dispatch=useDispatch();
+    const navigate = useNavigate();
     const handleGoogleClick = async() => 
     {  
         try 
@@ -30,6 +32,7 @@ export default function OAuth() {
             const data = await res.json(); // to make the res data available
             console.log(data);
             dispatch(signInSuccess(data)); // to send the data to redux for home page and else 
+            navigate('/');
         }
         
         catch (error) {
@@ -39,5 +42,5 @@ export default function OAuth() {
 
   return (
     <button type='button' onClick={handleGoogleClick} className='bg-red-500 text-white rounded-lg p-3 uppercase hover:opacity-50 '>Continue with google</button>
-  )
+  );
 }
