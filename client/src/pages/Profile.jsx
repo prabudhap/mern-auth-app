@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useRef } from 'react'
 import { getDownloadURL, getStorage, ref, uploadBytesResumable} from 'firebase/storage';
 import { app } from '../firebase';
-import { deleteUserFailure, deleteUserStart, deleteUserSuccess, updateUserFailure,updateUserStart,updateUserSuccess } from '../redux/user/userSlice.js';
+import { deleteUserFailure, deleteUserStart, deleteUserSuccess, signOut, updateUserFailure,updateUserStart,updateUserSuccess } from '../redux/user/userSlice.js';
 
 
 export default function profile() {
@@ -74,7 +74,7 @@ export default function profile() {
   const handleDeleteAccount = async() => {
       try {
         dispatch(deleteUserStart)
-        const res = await fetch(`/api/user/delete/${currentUser._id}`,
+        const res = await fetch(`/api/auth/delete/${currentUser._id}`,
         {
           method:'DELETE',
         });
@@ -88,7 +88,18 @@ export default function profile() {
       } catch (error) {
         dispatch(deleteUserFailure(error));
       }
+    };
+
+  const handleSignout = async() =>
+  {
+    try {
+        
+      await fetch('/api/user/signout');
+      dispatch(signOut());
+    } catch (error) {
+      console.log(error);
     }
+  }
 
   return (
     <div className='p-3  max-w-lg mx-auto'>
@@ -129,7 +140,7 @@ export default function profile() {
       </form>
       <div className='flex justify-between mt-4 '>
         <span  onClick={handleDeleteAccount} className='text-red-700 cursor-pointer hover:opacity-65 '>Delete Account</span>
-        <span className='text-red-700 cursor-pointer hover:opacity-65 '>Sign Out</span>
+        <span onClick={handleSignout} className='text-red-700 cursor-pointer hover:opacity-65 '>Sign Out</span>
 
       </div>
     </div>
